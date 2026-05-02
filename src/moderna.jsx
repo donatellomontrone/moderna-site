@@ -1,4 +1,4 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 
 export default function ModernaWebsite() {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -8,6 +8,206 @@ export default function ModernaWebsite() {
   const [galleryOpen, setGalleryOpen] = useState(false);
   const [menuAccordionOpen, setMenuAccordionOpen] = useState(false);
   const [lightboxIndex, setLightboxIndex] = useState(null);
+  const [lang, setLang] = useState("en");
+  const [newsletterOpen, setNewsletterOpen] = useState(false);
+
+  const translations = {
+    en: {
+      about:"About", menu:"Menu", wines:"Wines", spaces:"Spaces", reservations:"Reservations", reserve:"Reserve",
+      gallery:"Gallery", events:"Events", sustainability:"Sustainability", ourTeam:"Our Team",
+      reserveTable:"Reserve a Table", alaCarte:"À La Carte", setMenu:"Set Menu", restaurant:"Restaurant",
+      heroSub:"Modern Italian dining with Filipino warmth.",
+      aboutTitle:"A New Expression of Italian Dining",
+      aboutBody1:"Moderna is the elevated dining concept of Al Dente Food Group. Built on Italian culinary discipline, refined execution, and a deeper dialogue with the ingredients and culture of the Philippines.",
+      aboutBody2:"This is not fusion for effect. It is a restaurant guided by technique, restraint, memory, and identity. Every dish starts from an Italian point of view and evolves through local products, seasonality, and context.",
+      storyLabel:"A Story of Roots, Craft & Place",
+      storyTitle:"A cuisine that speaks Italian,\nbut lives fully in Manila.",
+      storyBody:"The experience is designed to feel intimate, precise, and alive. Refined, but never cold. Moderna is built around detail — around ingredients treated with respect, and a dining room shaped by atmosphere, product, and clarity.",
+      viewFullMenu:"View Full Menu",
+      philosophyLabel:"Our Philosophy",
+      philosophyTitle:"Three principles that guide every plate.",
+      phil1Title:"Italian Technique", phil1Body:"Classical foundations, precision, structure, and balance in every plate.",
+      phil2Title:"Filipino Sensibility", phil2Body:"Local ingredients, local memory, and a stronger connection to place.",
+      phil3Title:"Thoughtful Sustainability", phil3Body:"Respect for ingredients, controlled sourcing, and a kitchen culture built around intention.",
+      mainRoom:"The Main Room", privateRoom:"Private Room",
+      privateRoomSub:"Available for private events and dinners · Up to 20 guests",
+      comeDine:"Come & Dine", location:"Location", hours:"Hours", openMaps:"Open in Maps →",
+      happyHour:"Happy Hour", dinnerService:"Dinner Service", closed:"Closed",
+      days:["Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday","Monday"],
+      perPerson:"per person", supplements:"Supplements", orWord:"or",
+      vatNote:"Prices inclusive of 12% VAT · 10% service charge",
+      wineList:"Wine List", calice:"glass", bott:"btl",
+      footerSub:"Contemporary Italian Dining · BGC · By Al Dente Food Group",
+      nlLabel:"Stay Connected", nlTitle:"Events & Updates",
+      nlBody:"Subscribe to receive first access to Moderna's private events, seasonal menus, and exclusive evenings.",
+      nlPlaceholder:"Your email address", nlBtn:"Subscribe", nlSkip:"No thanks",
+      nlSuccessTitle:"Thank you", nlSuccessBody:"You're on the list.\nWe'll be in touch with our upcoming events.", nlClose:"Close",
+      teamLabel:"Our Team", teamTitle:"Built on discipline.\nDriven by craft.",
+      teamBody1:"Moderna is built by a team that combines culinary discipline with operational structure. Led by Chef Donatello Montrone, the group brings together Italian technique, precise execution, and a clear system behind every service.",
+      teamBody2:"The kitchen and dining room operate as one unit. Every detail — from preparation to service — is driven by consistency, accountability, and respect for the craft. This is not a personality-driven concept. It is a team built on standards.",
+      joinLabel:"Join the Team",
+      joinBody:"We are building a team that values precision, accountability, and consistency. This is not a casual environment. Standards are high, and expectations are clear. If you are serious about your work and want to be part of a structured and growing group, apply.",
+      eventsLabel:"Private Events & Dining", eventsTitle:"Host your event\nat Moderna.",
+      capacityLabel:"Capacity",
+      cap1label:"Private Room — Seated", cap1val:"Up to 20 guests",
+      cap2label:"Full Venue — Seated", cap2val:"Up to 70 guests",
+      cap3label:"Full Venue — Standing", cap3val:"Up to 120 guests",
+      cap4label:"Format", cap4val:"Heavy cocktails · Seated dinner · Private dining",
+      eventsBody1:"Moderna offers two distinct event formats — an intimate private room for up to 20 guests, and full venue buyouts for larger gatherings of up to 70 seated or 120 standing.",
+      eventsBody2:"Every event is supported by the same kitchen and service standards as our regular dining experience. Custom menus, wine pairings, and event packages are available on request.",
+      eventsEnquire:"Enquire → moderna.bgc@gmail.com",
+      privateRoomLabel:"The Private Room", privateRoomCaption:"An intimate space for up to 20 guests.",
+      sustainTitle:"Sustainability",
+      sustainOpening:"Moderna approaches sustainability through discipline, not statements.",
+      sustainBody1:"Every ingredient is used with intention, every process is controlled, and waste is treated as a failure of the system.",
+      sustainHow:"How We Work",
+      sustainBody2:"Our structure allows us to minimize waste across the group. With two restaurants operating together, ingredients are shared, repurposed, and transformed across different preparations. What does not serve one menu is developed into another.",
+      sustainBody3:"This approach allows us to work closer to zero waste, without compromising quality or consistency.",
+      sustainOps:"Operational Standards",
+      sustainPoints:["Cross-utilization of ingredients across multiple menus","Centralized production to reduce over-ordering and waste","Seasonal sourcing and controlled purchasing","Continuous adaptation of menus based on product availability","Respect for the full lifecycle of each ingredient"],
+      sustainClosing:"Sustainability at Moderna is not an add-on.",
+      sustainClosingBody:"It is part of how the kitchen operates, how decisions are made, and how the business is structured.",
+    },
+    it: {
+      about:"Chi Siamo", menu:"Menu", wines:"Vini", spaces:"Spazi", reservations:"Prenotazioni", reserve:"Prenota",
+      gallery:"Galleria", events:"Eventi", sustainability:"Sostenibilità", ourTeam:"Il Team",
+      reserveTable:"Prenota un Tavolo", alaCarte:"À La Carte", setMenu:"Menu Fisso", restaurant:"Ristorante",
+      heroSub:"Cucina italiana moderna con calore filippino.",
+      aboutTitle:"Una Nuova Espressione della Cucina Italiana",
+      aboutBody1:"Moderna è il concept gastronomico di eccellenza di Al Dente Food Group. Fondato sulla disciplina culinaria italiana, un'esecuzione raffinata e un dialogo più profondo con gli ingredienti e la cultura delle Filippine.",
+      aboutBody2:"Non è fusione per effetto. È un ristorante guidato da tecnica, misura, memoria e identità. Ogni piatto parte da un punto di vista italiano e si evolve attraverso prodotti locali, stagionalità e contesto.",
+      storyLabel:"Una Storia di Radici, Mestiere e Luogo",
+      storyTitle:"Una cucina che parla italiano,\nma vive pienamente a Manila.",
+      storyBody:"L'esperienza è progettata per essere intima, precisa e viva. Raffinata, ma mai fredda. Moderna è costruita attorno al dettaglio — attorno agli ingredienti trattati con rispetto, e una sala plasmata dall'atmosfera, dal prodotto e dalla chiarezza.",
+      viewFullMenu:"Vedi Menu Completo",
+      philosophyLabel:"La Nostra Filosofia",
+      philosophyTitle:"Tre principi che guidano ogni piatto.",
+      phil1Title:"Tecnica Italiana", phil1Body:"Fondamenta classiche, precisione, struttura ed equilibrio in ogni piatto.",
+      phil2Title:"Sensibilità Filippina", phil2Body:"Ingredienti locali, memoria locale e una connessione più forte al luogo.",
+      phil3Title:"Sostenibilità Consapevole", phil3Body:"Rispetto per gli ingredienti, approvvigionamento controllato e una cultura di cucina costruita attorno all'intenzione.",
+      mainRoom:"La Sala Principale", privateRoom:"Sala Privata",
+      privateRoomSub:"Disponibile per eventi privati e cene · Fino a 20 persone",
+      comeDine:"Vieni a Cenare", location:"Indirizzo", hours:"Orari", openMaps:"Apri in Maps →",
+      happyHour:"Happy Hour", dinnerService:"Servizio Cena", closed:"Chiuso",
+      days:["Martedì","Mercoledì","Giovedì","Venerdì","Sabato","Domenica","Lunedì"],
+      perPerson:"per persona", supplements:"Supplementi", orWord:"o",
+      vatNote:"Prezzi incluso IVA 12% · Servizio 10%",
+      wineList:"Lista dei Vini", calice:"calice", bott:"bott.",
+      footerSub:"Cucina Italiana Contemporanea · BGC · Al Dente Food Group",
+      nlLabel:"Resta Connesso", nlTitle:"Eventi & Aggiornamenti",
+      nlBody:"Iscriviti per ricevere accesso prioritario agli eventi privati di Moderna, menu stagionali e serate esclusive.",
+      nlPlaceholder:"Il tuo indirizzo email", nlBtn:"Iscriviti", nlSkip:"No grazie",
+      nlSuccessTitle:"Grazie", nlSuccessBody:"Sei nella lista.\nTi contatteremo con i nostri prossimi eventi.", nlClose:"Chiudi",
+      teamLabel:"Il Nostro Team", teamTitle:"Fondato sulla disciplina.\nGuidato dall'arte.",
+      teamBody1:"Moderna è costruita da un team che combina disciplina culinaria e struttura operativa. Guidato dallo Chef Donatello Montrone, il gruppo riunisce tecnica italiana, esecuzione precisa e un sistema chiaro dietro ogni servizio.",
+      teamBody2:"La cucina e la sala operano come un'unità unica. Ogni dettaglio — dalla preparazione al servizio — è guidato da coerenza, responsabilità e rispetto per il mestiere. Non è un concept guidato dalla personalità. È un team costruito su standard.",
+      joinLabel:"Unisciti al Team",
+      joinBody:"Stiamo costruendo un team che valorizza precisione, responsabilità e coerenza. Non è un ambiente casual. Gli standard sono alti e le aspettative sono chiare. Se sei serio nel tuo lavoro e vuoi far parte di un gruppo strutturato e in crescita, candidati.",
+      eventsLabel:"Eventi Privati & Dining", eventsTitle:"Organizza il tuo evento\nda Moderna.",
+      capacityLabel:"Capacità",
+      cap1label:"Sala Privata — A Sedere", cap1val:"Fino a 20 ospiti",
+      cap2label:"Locale Intero — A Sedere", cap2val:"Fino a 70 ospiti",
+      cap3label:"Locale Intero — In Piedi", cap3val:"Fino a 120 ospiti",
+      cap4label:"Formato", cap4val:"Heavy cocktail · Cena a sedere · Dinner privato",
+      eventsBody1:"Moderna offre due formati eventi distinti — una sala privata intima per un massimo di 20 ospiti e l'affitto dell'intero locale per eventi più grandi fino a 70 a sedere o 120 in piedi.",
+      eventsBody2:"Ogni evento è supportato dagli stessi standard di cucina e servizio della nostra esperienza dining regolare. Menu personalizzati, abbinamenti vini e pacchetti eventi sono disponibili su richiesta.",
+      eventsEnquire:"Richiedi info → moderna.bgc@gmail.com",
+      privateRoomLabel:"La Sala Privata", privateRoomCaption:"Uno spazio intimo per un massimo di 20 ospiti.",
+      sustainTitle:"Sostenibilità",
+      sustainOpening:"Moderna affronta la sostenibilità attraverso la disciplina, non le dichiarazioni.",
+      sustainBody1:"Ogni ingrediente viene utilizzato con intenzione, ogni processo è controllato e lo spreco è trattato come un fallimento del sistema.",
+      sustainHow:"Come Lavoriamo",
+      sustainBody2:"La nostra struttura ci permette di ridurre al minimo gli sprechi nel gruppo. Con due ristoranti che operano insieme, gli ingredienti vengono condivisi, riutilizzati e trasformati in diverse preparazioni. Ciò che non serve a un menu viene sviluppato in un altro.",
+      sustainBody3:"Questo approccio ci permette di lavorare verso zero sprechi, senza compromettere qualità o coerenza.",
+      sustainOps:"Standard Operativi",
+      sustainPoints:["Utilizzo incrociato degli ingredienti su più menu","Produzione centralizzata per ridurre ordini eccessivi e sprechi","Approvvigionamento stagionale e acquisti controllati","Adattamento continuo dei menu in base alla disponibilità dei prodotti","Rispetto per l'intero ciclo di vita di ogni ingrediente"],
+      sustainClosing:"La sostenibilità da Moderna non è un add-on.",
+      sustainClosingBody:"È parte del modo in cui opera la cucina, delle decisioni che vengono prese e di come è strutturato il business.",
+    },
+    tl: {
+      about:"Tungkol", menu:"Menu", wines:"Alak", spaces:"Espasyo", reservations:"Reserbasyon", reserve:"Mag-reserve",
+      gallery:"Galeria", events:"Mga Evento", sustainability:"Sustainability", ourTeam:"Ang Aming Koponan",
+      reserveTable:"Mag-reserve ng Mesa", alaCarte:"À La Carte", setMenu:"Set Menu", restaurant:"Restaurant",
+      heroSub:"Modernong lutuing Italyano na may init ng Pilipino.",
+      aboutTitle:"Isang Bagong Anyo ng Italyanong Pagkain",
+      aboutBody1:"Ang Moderna ay ang pinakamataas na antas na konsepto ng pagkain ng Al Dente Food Group. Itinayo sa disiplina ng lutuing Italyano, pinino na pagpapatupad, at mas malalim na pakikipag-usap sa mga sangkap at kultura ng Pilipinas.",
+      aboutBody2:"Hindi ito pagsasama ng mga lutuin para sa epekto. Ito ay isang restaurant na ginagabayan ng teknik, pagpipigil, alaala, at pagkakakilanlan. Bawat putahe ay nagsisimula mula sa isang Italyanong pananaw at umuunlad sa pamamagitan ng mga lokal na produkto, panahon, at konteksto.",
+      storyLabel:"Isang Kwento ng Ugat, Sining at Lugar",
+      storyTitle:"Isang lutuing nagsasalitang Italyano,\nngunit ganap na nabubuhay sa Manila.",
+      storyBody:"Ang karanasan ay idinisenyo upang maging malapit, tumpak, at buhay. Pino, ngunit hindi malamig. Ang Moderna ay itinayo sa paligid ng detalye — sa paligid ng mga sangkap na tinatrato nang may respeto, at isang sala na hinubog ng atmospera, produkto, at kalinawan.",
+      viewFullMenu:"Tingnan ang Buong Menu",
+      philosophyLabel:"Ang Aming Pilosopiya",
+      philosophyTitle:"Tatlong prinsipyo na gumagabay sa bawat plato.",
+      phil1Title:"Italyanong Teknik", phil1Body:"Klasikal na pundasyon, katumpakan, istraktura, at balanse sa bawat plato.",
+      phil2Title:"Pilipinong Kamalayan", phil2Body:"Mga lokal na sangkap, lokal na alaala, at mas malakas na koneksyon sa lugar.",
+      phil3Title:"Maingat na Sustainability", phil3Body:"Paggalang sa mga sangkap, kontroladong pagkuha, at isang kulturang pang-kusina na itinayo sa paligid ng layunin.",
+      mainRoom:"Ang Pangunahing Silid", privateRoom:"Pribadong Silid",
+      privateRoomSub:"Available para sa mga pribadong evento at hapunan · Hanggang 20 bisita",
+      comeDine:"Halika at Kumain", location:"Lokasyon", hours:"Mga Oras", openMaps:"Buksan sa Maps →",
+      happyHour:"Happy Hour", dinnerService:"Serbisyong Hapunan", closed:"Sarado",
+      days:["Martes","Miyerkules","Huwebes","Biyernes","Sabado","Linggo","Lunes"],
+      perPerson:"bawat tao", supplements:"Mga Dagdag", orWord:"o",
+      vatNote:"Ang mga presyo ay kasama ang 12% VAT · 10% service charge",
+      wineList:"Listahan ng Alak", calice:"baso", bott:"bote",
+      footerSub:"Kontemporaryong Italyanong Pagkain · BGC · Al Dente Food Group",
+      nlLabel:"Manatiling Konektado", nlTitle:"Mga Evento at Balita",
+      nlBody:"Mag-subscribe upang makatanggap ng unang access sa mga pribadong evento ng Moderna, mga pana-panahong menu, at mga eksklusibong gabi.",
+      nlPlaceholder:"Ang iyong email address", nlBtn:"Mag-subscribe", nlSkip:"Hindi, salamat",
+      nlSuccessTitle:"Salamat", nlSuccessBody:"Nasa listahan ka na.\nMakikipag-ugnayan kami sa iyo para sa aming mga darating na evento.", nlClose:"Isara",
+      teamLabel:"Ang Aming Koponan", teamTitle:"Itinayo sa disiplina.\nPinapatakbo ng sining.",
+      teamBody1:"Ang Moderna ay itinayo ng isang koponan na pinagsama ang disiplinang pang-kulinarya at istraktura ng operasyon. Sa ilalim ng pamumuno ni Chef Donatello Montrone, pinagsama ng grupo ang Italyanong teknik, tumpak na pagpapatupad, at isang malinaw na sistema sa bawat serbisyo.",
+      teamBody2:"Ang kusina at sala ay nagpapatakbo bilang isang yunit. Bawat detalye — mula sa paghahanda hanggang sa serbisyo — ay pinapatakbo ng konsistensi, pananagutan, at paggalang sa sining. Hindi ito isang konsepto na pinapatakbo ng personalidad. Ito ay isang koponang itinayo sa mga pamantayan.",
+      joinLabel:"Sumali sa Koponan",
+      joinBody:"Nagtatayo kami ng isang koponan na nagpapahalaga sa katumpakan, pananagutan, at konsistensi. Hindi ito isang kaswal na kapaligiran. Mataas ang mga pamantayan at malinaw ang mga inaasahan. Kung seryoso ka sa iyong trabaho at nais maging bahagi ng isang nakastrukturo at lumalaking grupo, mag-apply.",
+      eventsLabel:"Mga Pribadong Evento at Hapunan", eventsTitle:"I-host ang iyong evento\nsa Moderna.",
+      capacityLabel:"Kapasidad",
+      cap1label:"Pribadong Silid — Nakaupo", cap1val:"Hanggang 20 bisita",
+      cap2label:"Buong Lugar — Nakaupo", cap2val:"Hanggang 70 bisita",
+      cap3label:"Buong Lugar — Nakatayo", cap3val:"Hanggang 120 bisita",
+      cap4label:"Format", cap4val:"Heavy cocktails · Hapunang nakaupo · Pribadong dining",
+      eventsBody1:"Nag-aalok ang Moderna ng dalawang natatanging format ng evento — isang malapit na pribadong silid para sa hanggang 20 bisita, at buong venue para sa mas malalaking pagtitipon ng hanggang 70 nakaupo o 120 nakatayo.",
+      eventsBody2:"Bawat evento ay sinusuportahan ng parehong pamantayan ng kusina at serbisyo tulad ng aming regular na karanasan sa dining. Ang mga custom na menu, wine pairing, at event package ay available sa kahilingan.",
+      eventsEnquire:"Magtanong → moderna.bgc@gmail.com",
+      privateRoomLabel:"Ang Pribadong Silid", privateRoomCaption:"Isang malapit na espasyo para sa hanggang 20 bisita.",
+      sustainTitle:"Sustainability",
+      sustainOpening:"Ang Moderna ay humaharap sa sustainability sa pamamagitan ng disiplina, hindi mga pahayag.",
+      sustainBody1:"Bawat sangkap ay ginagamit nang may layunin, bawat proseso ay kontrolado, at ang basura ay tinatrato bilang kabiguan ng sistema.",
+      sustainHow:"Paano Kami Nagtatrabaho",
+      sustainBody2:"Ang aming istraktura ay nagbibigay-daan sa amin na mabawasan ang basura sa buong grupo. Sa dalawang restaurant na nagtatrabaho nang magkasama, ang mga sangkap ay ibinabahagi, muling ginagamit, at binabago sa iba't ibang paghahanda. Ang hindi nagsisilbi sa isang menu ay binubuo sa isa pa.",
+      sustainBody3:"Ang pamamaraang ito ay nagbibigay-daan sa amin na magtrabaho nang mas malapit sa zero basura, nang hindi ikokompromiso ang kalidad o konsistensi.",
+      sustainOps:"Mga Pamantayang Operasyon",
+      sustainPoints:["Cross-utilization ng mga sangkap sa iba't ibang menu","Sentralisadong produksyon upang mabawasan ang labis na pag-order at basura","Pana-panahong pagkuha at kontroladong pagbili","Patuloy na pag-angkop ng mga menu batay sa availability ng produkto","Paggalang sa buong ikot ng buhay ng bawat sangkap"],
+      sustainClosing:"Ang sustainability sa Moderna ay hindi isang add-on.",
+      sustainClosingBody:"Ito ay bahagi ng kung paano nagpapatakbo ang kusina, kung paano ginagawa ang mga desisyon, at kung paano nakaayos ang negosyo.",
+    },
+  };
+  const t = translations[lang];
+  const [newsletterEmail, setNewsletterEmail] = useState("");
+  const [newsletterSubmitted, setNewsletterSubmitted] = useState(false);
+  const SHEETS_URL = "https://script.google.com/macros/s/AKfycbyXdJaT3stIokc-BI_9FO_I8KsC-Gg8kyyFpc_QDKTL8-AmOR5mzJ7xJDQYTTlgXD4d/exec";
+
+  const handleNewsletterSubmit = async () => {
+    if (!newsletterEmail.includes("@")) return;
+    try {
+      await fetch(SHEETS_URL, {
+        method: "POST",
+        mode: "no-cors",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: newsletterEmail }),
+      });
+    } catch(err) { /* silently fail */ }
+    setNewsletterSubmitted(true);
+  };
+
+  useEffect(() => {
+    const alreadySeen = sessionStorage.getItem("nl_seen");
+    if (alreadySeen) return;
+    const t = setTimeout(() => {
+      setNewsletterOpen(true);
+      sessionStorage.setItem("nl_seen", "1");
+    }, 4000);
+    return () => clearTimeout(t);
+  }, []);
   const touchStartXRef = useRef(null);
   const touchMovedRef = useRef(false);
   const reserveUrl = "https://www.opentable.com.au/r/moderna-bgc-reservations-taguig?restref=307703&lang=en-AU&ot_source=Restaurant%20website";
@@ -175,6 +375,33 @@ export default function ModernaWebsite() {
     .suppl-item:last-child { border-bottom: none; }
     @keyframes fadeInLightbox { from { opacity: 0; } to { opacity: 1; } }
     @keyframes zoomInLightbox { from { opacity: 0; transform: scale(0.985); } to { opacity: 1; transform: scale(1); } }
+    @keyframes nlSlideUp { from { opacity:0; transform:translateY(32px); } to { opacity:1; transform:translateY(0); } }
+    .nl-backdrop { position:fixed; inset:0; z-index:500; background:rgba(26,23,20,0.55); backdrop-filter:blur(4px); display:flex; align-items:flex-end; justify-content:center; animation: fadeInLightbox 0.4s ease both; }
+    @media(min-width:600px){ .nl-backdrop { align-items:center; } }
+    .nl-card { background:var(--dark); width:100%; max-width:480px; padding:56px 48px 48px; position:relative; animation: nlSlideUp 0.5s cubic-bezier(0.16,1,0.3,1) both; }
+    @media(max-width:599px){ .nl-card { padding:48px 28px 40px; border-radius:0; } }
+    .nl-close { position:absolute; top:20px; right:20px; background:none; border:none; cursor:pointer; color:rgba(250,248,244,0.35); font-family:var(--sans); font-size:18px; line-height:1; padding:4px 8px; transition:color 0.2s; }
+    .nl-close:hover { color:rgba(250,248,244,0.8); }
+    .nl-label { font-size:9px; letter-spacing:0.38em; text-transform:uppercase; color:rgba(250,248,244,0.35); font-family:var(--sans); font-weight:300; margin-bottom:20px; }
+    .nl-title { font-family:var(--display); font-size:clamp(1.7rem,4vw,2.4rem); font-weight:300; color:#faf8f4; line-height:1.18; margin-bottom:16px; }
+    .nl-body { font-family:var(--sans); font-size:0.85rem; font-weight:300; color:rgba(250,248,244,0.55); line-height:1.9; margin-bottom:36px; }
+    .nl-form { display:flex; flex-direction:column; gap:12px; }
+    .nl-input { background:rgba(250,248,244,0.06); border:1px solid rgba(250,248,244,0.14); padding:14px 18px; font-family:var(--sans); font-size:0.85rem; font-weight:300; color:#faf8f4; outline:none; transition:border-color 0.2s; }
+    .nl-input::placeholder { color:rgba(250,248,244,0.28); }
+    .nl-input:focus { border-color:rgba(250,248,244,0.4); }
+    .nl-btn { background:rgba(250,248,244,0.92); border:none; padding:15px 28px; font-family:var(--sans); font-size:10px; letter-spacing:0.28em; text-transform:uppercase; font-weight:300; color:var(--dark); cursor:pointer; transition:opacity 0.2s; }
+    .nl-btn:hover { opacity:0.82; }
+    .nl-skip { background:none; border:none; cursor:pointer; font-family:var(--sans); font-size:9px; letter-spacing:0.22em; text-transform:uppercase; color:rgba(250,248,244,0.25); font-weight:300; margin-top:16px; text-align:center; width:100%; transition:color 0.2s; }
+    .nl-skip:hover { color:rgba(250,248,244,0.5); }
+    .nl-success { text-align:center; padding:20px 0; }
+    .nl-success-icon { font-size:2rem; margin-bottom:16px; }
+    .nl-success-title { font-family:var(--display); font-size:1.6rem; font-weight:300; color:#faf8f4; margin-bottom:12px; }
+    .nl-success-body { font-family:var(--sans); font-size:0.82rem; font-weight:300; color:rgba(250,248,244,0.5); line-height:1.9; }
+    .lang-switcher { display:flex; align-items:center; gap:6px; }
+    .lang-btn { background:none; border:none; cursor:pointer; font-family:var(--sans); font-size:9px; letter-spacing:0.18em; text-transform:uppercase; font-weight:300; color:var(--mid); padding:4px 2px; transition:color 0.2s; }
+    .lang-btn:hover { color:var(--dark); }
+    .lang-btn.active { color:var(--dark); border-bottom:1px solid var(--dark); }
+    .lang-sep { font-size:9px; color:var(--border); }
 
     .philosophy-grid { width: 100%; }
     .philosophy-card { min-width: 0; }
@@ -367,43 +594,34 @@ export default function ModernaWebsite() {
         <div style={{position:"absolute",inset:0,background:"rgba(26,23,20,0.32)"}} />
         <div style={{position:"absolute",bottom:0,left:0,right:0,padding:"48px"}}>
           <img src={IMG_LOGO_WHITE} alt="Moderna" style={{height:16,opacity:0.7,display:"block",marginBottom:16}} />
-          <h1 className="h1" style={{color:"#faf8f4",lineHeight:1.1}}>Sustainability</h1>
+          <h1 className="h1" style={{color:"#faf8f4",lineHeight:1.1}}>{t.sustainTitle}</h1>
         </div>
       </div>
 
       <div style={{maxWidth:760,margin:"0 auto",padding:"80px 32px 120px"}}>
 
-        {/* OPENING */}
         <p style={{fontFamily:"var(--serif)",fontStyle:"italic",fontSize:"clamp(1.3rem,2.5vw,1.75rem)",color:"var(--dark)",lineHeight:1.55,marginBottom:20}}>
-          Moderna approaches sustainability through discipline, not statements.
+          {t.sustainOpening}
         </p>
         <p style={{fontFamily:"var(--sans)",fontSize:"0.9rem",lineHeight:2,color:"var(--mid)",fontWeight:300,marginBottom:64}}>
-          Every ingredient is used with intention, every process is controlled, and waste is treated as a failure of the system.
+          {t.sustainBody1}
         </p>
 
         <div className="hdivider" style={{marginBottom:64}} />
 
-        {/* CORE */}
-        <p className="label" style={{marginBottom:24}}>How We Work</p>
+        <p className="label" style={{marginBottom:24}}>{t.sustainHow}</p>
         <p style={{fontFamily:"var(--sans)",fontSize:"0.9rem",lineHeight:2,color:"var(--mid)",fontWeight:300,marginBottom:16}}>
-          Our structure allows us to minimize waste across the group. With two restaurants operating together, ingredients are shared, repurposed, and transformed across different preparations. What does not serve one menu is developed into another.
+          {t.sustainBody2}
         </p>
         <p style={{fontFamily:"var(--sans)",fontSize:"0.9rem",lineHeight:2,color:"var(--mid)",fontWeight:300,marginBottom:64}}>
-          This approach allows us to work closer to zero waste, without compromising quality or consistency.
+          {t.sustainBody3}
         </p>
 
         <div className="hdivider" style={{marginBottom:64}} />
 
-        {/* OPERATIONAL POINTS */}
-        <p className="label" style={{marginBottom:32}}>Operational Standards</p>
+        <p className="label" style={{marginBottom:32}}>{t.sustainOps}</p>
         <div style={{display:"flex",flexDirection:"column",gap:0}}>
-          {[
-            "Cross-utilization of ingredients across multiple menus",
-            "Centralized production to reduce over-ordering and waste",
-            "Seasonal sourcing and controlled purchasing",
-            "Continuous adaptation of menus based on product availability",
-            "Respect for the full lifecycle of each ingredient",
-          ].map((point,i) => (
+          {t.sustainPoints.map((point,i) => (
             <div key={i} style={{display:"flex",alignItems:"flex-start",gap:24,padding:"20px 0",borderBottom:"1px solid var(--border)"}}>
               <span style={{fontFamily:"var(--sans)",fontSize:"0.7rem",fontWeight:300,color:"var(--mid)",opacity:0.4,paddingTop:3,minWidth:20}}>0{i+1}</span>
               <p style={{fontFamily:"var(--sans)",fontSize:"0.9rem",lineHeight:1.8,color:"var(--dark)",fontWeight:300}}>{point}</p>
@@ -415,10 +633,10 @@ export default function ModernaWebsite() {
 
         {/* CLOSING */}
         <p style={{fontFamily:"var(--serif)",fontStyle:"italic",fontSize:"clamp(1.1rem,2vw,1.4rem)",color:"var(--dark)",lineHeight:1.65,marginBottom:20}}>
-          Sustainability at Moderna is not an add-on.
+          {t.sustainClosing}
         </p>
         <p style={{fontFamily:"var(--sans)",fontSize:"0.9rem",lineHeight:2,color:"var(--mid)",fontWeight:300}}>
-          It is part of how the kitchen operates, how decisions are made, and how the business is structured.
+          {t.sustainClosingBody}
         </p>
 
       </div>
@@ -432,8 +650,10 @@ export default function ModernaWebsite() {
         <img src={IMG_EVENT_PARTY} alt="Moderna events" style={{width:"100%",height:"100%",objectFit:"cover",objectPosition:"center 40%",display:"block"}} />
         <div style={{position:"absolute",inset:0,background:"rgba(26,23,20,0.38)"}} />
         <div style={{position:"absolute",bottom:0,left:0,right:0,padding:"48px 48px"}}>
-          <p className="label" style={{color:"rgba(250,248,244,0.55)",marginBottom:12}}>Private Events & Dining</p>
-          <h1 className="h1" style={{color:"#faf8f4",lineHeight:1.1}}>Host your event<br />at Moderna.</h1>
+          <p className="label" style={{color:"rgba(250,248,244,0.55)",marginBottom:12}}>{t.eventsLabel}</p>
+          <h1 className="h1" style={{color:"#faf8f4",lineHeight:1.1}}>
+            {t.eventsTitle.split("\n").map((l,i)=><span key={i}>{l}{i===0&&<br/>}</span>)}
+          </h1>
         </div>
       </div>
 
@@ -441,13 +661,13 @@ export default function ModernaWebsite() {
       <div style={{background:"var(--dark)",padding:"72px 48px"}}>
         <div style={{maxWidth:900,margin:"0 auto",display:"grid",gridTemplateColumns:"1fr 1fr",gap:64}} className="team-text-grid">
           <div>
-            <p className="label" style={{color:"rgba(250,248,244,0.4)",marginBottom:32}}>Capacity</p>
+            <p className="label" style={{color:"rgba(250,248,244,0.4)",marginBottom:32}}>{t.capacityLabel}</p>
             <div style={{borderTop:"1px solid rgba(250,248,244,0.1)"}}>
               {[
-                {label:"Private Room — Seated",   val:"Up to 20 guests"},
-                {label:"Full Venue — Seated",      val:"Up to 70 guests"},
-                {label:"Full Venue — Standing",    val:"Up to 120 guests"},
-                {label:"Format",                   val:"Heavy cocktails · Seated dinner · Private dining"},
+                {label:t.cap1label, val:t.cap1val},
+                {label:t.cap2label, val:t.cap2val},
+                {label:t.cap3label, val:t.cap3val},
+                {label:t.cap4label, val:t.cap4val},
               ].map(r => (
                 <div key={r.label} style={{display:"flex",justifyContent:"space-between",alignItems:"baseline",padding:"20px 0",borderBottom:"1px solid rgba(250,248,244,0.08)"}}>
                   <p style={{fontFamily:"var(--sans)",fontSize:"0.78rem",letterSpacing:"0.08em",textTransform:"uppercase",color:"rgba(250,248,244,0.4)",fontWeight:300}}>{r.label}</p>
@@ -458,13 +678,13 @@ export default function ModernaWebsite() {
           </div>
           <div style={{display:"flex",flexDirection:"column",justifyContent:"center"}}>
             <p style={{fontFamily:"var(--sans)",fontSize:"0.88rem",lineHeight:2,color:"rgba(250,248,244,0.6)",fontWeight:300,marginBottom:16}}>
-              Moderna offers two distinct event formats — an intimate private room for up to 20 guests, and full venue buyouts for larger gatherings of up to 70 seated or 120 standing.
+              {t.eventsBody1}
             </p>
             <p style={{fontFamily:"var(--sans)",fontSize:"0.88rem",lineHeight:2,color:"rgba(250,248,244,0.6)",fontWeight:300,marginBottom:48}}>
-              Every event is supported by the same kitchen and service standards as our regular dining experience. Custom menus, wine pairings, and event packages are available on request.
+              {t.eventsBody2}
             </p>
             <a href="mailto:moderna.bgc@gmail.com" style={{fontFamily:"var(--sans)",fontSize:"10px",letterSpacing:"0.22em",textTransform:"uppercase",color:"#faf8f4",borderBottom:"1px solid rgba(250,248,244,0.4)",paddingBottom:2,fontWeight:300,alignSelf:"flex-start"}}>
-              Enquire → moderna.bgc@gmail.com
+              {t.eventsEnquire}
             </a>
           </div>
         </div>
@@ -474,8 +694,8 @@ export default function ModernaWebsite() {
       <div style={{width:"100%",height:"65vh",overflow:"hidden",position:"relative"}}>
         <img src={IMG_EVENT_ROOM} alt="Private dining room" style={{width:"100%",height:"100%",objectFit:"cover",objectPosition:"center 30%",display:"block"}} />
         <div style={{position:"absolute",bottom:0,left:0,right:0,background:"linear-gradient(to top,rgba(26,23,20,0.75),transparent)",padding:"40px 48px"}}>
-          <p className="label" style={{color:"rgba(250,248,244,0.55)",marginBottom:8}}>The Private Room</p>
-          <p style={{fontFamily:"var(--serif)",fontStyle:"italic",fontSize:"1.2rem",color:"#faf8f4",fontWeight:300}}>An intimate space for up to 20 guests.</p>
+          <p className="label" style={{color:"rgba(250,248,244,0.55)",marginBottom:8}}>{t.privateRoomLabel}</p>
+          <p style={{fontFamily:"var(--serif)",fontStyle:"italic",fontSize:"1.2rem",color:"#faf8f4",fontWeight:300}}>{t.privateRoomCaption}</p>
         </div>
       </div>
     </div>
@@ -492,20 +712,22 @@ export default function ModernaWebsite() {
       <div style={{background:"var(--dark)",padding:"80px 48px"}}>
         <div className="team-text-grid" style={{maxWidth:860,margin:"0 auto",display:"grid",gridTemplateColumns:"1fr 1fr",gap:80}}>
           <div>
-            <p className="label" style={{color:"rgba(250,248,244,0.4)",marginBottom:24}}>Our Team</p>
-            <h1 className="h1" style={{color:"#faf8f4",marginBottom:40,lineHeight:1.15}}>Built on discipline.<br />Driven by craft.</h1>
+            <p className="label" style={{color:"rgba(250,248,244,0.4)",marginBottom:24}}>{t.teamLabel}</p>
+            <h1 className="h1" style={{color:"#faf8f4",marginBottom:40,lineHeight:1.15}}>
+              {t.teamTitle.split("\n").map((l,i)=><span key={i}>{l}{i===0&&<br/>}</span>)}
+            </h1>
             <p style={{fontFamily:"var(--sans)",fontSize:"0.88rem",lineHeight:2,color:"rgba(250,248,244,0.6)",fontWeight:300,marginBottom:16}}>
-              Moderna is built by a team that combines culinary discipline with operational structure. Led by Chef Donatello Montrone, the group brings together Italian technique, precise execution, and a clear system behind every service.
+              {t.teamBody1}
             </p>
             <p style={{fontFamily:"var(--sans)",fontSize:"0.88rem",lineHeight:2,color:"rgba(250,248,244,0.6)",fontWeight:300}}>
-              The kitchen and dining room operate as one unit. Every detail — from preparation to service — is driven by consistency, accountability, and respect for the craft. This is not a personality-driven concept. It is a team built on standards.
+              {t.teamBody2}
             </p>
           </div>
           <div style={{display:"flex",flexDirection:"column",justifyContent:"flex-end"}}>
             <div style={{borderTop:"1px solid rgba(250,248,244,0.12)",paddingTop:40}}>
-              <p className="label" style={{color:"rgba(250,248,244,0.4)",marginBottom:20}}>Join the Team</p>
+              <p className="label" style={{color:"rgba(250,248,244,0.4)",marginBottom:20}}>{t.joinLabel}</p>
               <p style={{fontFamily:"var(--sans)",fontSize:"0.88rem",lineHeight:2,color:"rgba(250,248,244,0.5)",fontWeight:300,marginBottom:32}}>
-                We are building a team that values precision, accountability, and consistency. This is not a casual environment. Standards are high, and expectations are clear. If you are serious about your work and want to be part of a structured and growing group, apply.
+                {t.joinBody}
               </p>
               <a href="mailto:moderna.bgc@gmail.com" style={{fontFamily:"var(--sans)",fontSize:"10px",letterSpacing:"0.22em",textTransform:"uppercase",color:"#faf8f4",borderBottom:"1px solid rgba(250,248,244,0.4)",paddingBottom:2,fontWeight:300}}>
                 moderna.bgc@gmail.com →
@@ -643,13 +865,13 @@ export default function ModernaWebsite() {
       <div className="menu-page-header">
         <p className="label" style={{marginBottom:16}}>Moderna · BGC</p>
         <h1 className="h1">
-          {menuTab === "Wines" ? "Wine List" : menuTab === "Set Menu" ? "Set Menu" : "A La Carte"}
+          {menuTab === "Wines" ? t.wineList : menuTab === "Set Menu" ? t.setMenu : t.alaCarte}
         </h1>
       </div>
       <div className="menu-tabs">
         {["A La Carte","Set Menu","Wines"].map(tab => (
           <button key={tab} className={"menu-tab-btn" + (menuTab===tab?" active":"")} onClick={()=>setMenuTab(tab)}>
-            {tab === "A La Carte" ? "A La Carte" : tab}
+            {tab === "A La Carte" ? t.alaCarte : tab === "Set Menu" ? t.setMenu : t.wines}
           </button>
         ))}
       </div>
@@ -671,21 +893,21 @@ export default function ModernaWebsite() {
             </div>
           ))}
           <p style={{fontFamily:"var(--sans)",fontSize:"0.72rem",fontWeight:300,color:"var(--mid)",textAlign:"center",marginTop:16,letterSpacing:"0.04em"}}>
-            Prices inclusive of 12% VAT · 10% service charge
+            {t.vatNote}
           </p>
         </div>
       )}
 
       {menuTab === "Set Menu" && (
         <div className="set-wrapper">
-          <p className="set-price">2,900 <span style={{fontFamily:"var(--sans)",fontSize:"0.9rem",color:"var(--mid)",fontWeight:300}}>per person</span></p>
+          <p className="set-price">2,900 <span style={{fontFamily:"var(--sans)",fontSize:"0.9rem",color:"var(--mid)",fontWeight:300}}>{t.perPerson}</span></p>
           {setMenuData.map(cat => (
             <div key={cat.section} className="set-cat">
               <p className="label set-cat-title">{cat.section}</p>
               {cat.items.map((item,i) => (
                 <div key={i} style={{marginBottom:10}}>
                   {item.or
-                    ? <p className="set-or">or</p>
+                    ? <p className="set-or">{t.orWord}</p>
                     : <>
                         <p className="set-item-name">{item.name}</p>
                         {item.desc && <p className="set-item-desc">{item.desc}</p>}
@@ -697,7 +919,7 @@ export default function ModernaWebsite() {
             </div>
           ))}
           <div className="suppl-box">
-            <p className="label" style={{marginBottom:20,textAlign:"center"}}>Supplements</p>
+            <p className="label" style={{marginBottom:20,textAlign:"center"}}>{t.supplements}</p>
             {supplements.map(s => (
               <div key={s.name} className="suppl-item">
                 <div>
@@ -724,8 +946,8 @@ export default function ModernaWebsite() {
                     <p className="menu-item-sub">{item.origin}</p>
                   </div>
                   <div className="menu-item-price">
-                    {item.glass && <p className="menu-item-price-glass">{item.glass} <span className="price-unit">calice</span></p>}
-                    <p className="menu-item-price-main">{item.bottle} <span className="price-unit">bott.</span></p>
+                    {item.glass && <p className="menu-item-price-glass">{item.glass} <span className="price-unit">{t.calice}</span></p>}
+                    <p className="menu-item-price-main">{item.bottle} <span className="price-unit">{t.bott}</span></p>
                   </div>
                 </div>
               ))}
@@ -735,7 +957,7 @@ export default function ModernaWebsite() {
       )}
 
       <div style={{textAlign:"center",padding:"0 32px 80px"}}>
-        <a href={reserveUrl} target="_blank" rel="noreferrer" className="reserve-btn">Reserve a Table</a>
+        <a href={reserveUrl} target="_blank" rel="noreferrer" className="reserve-btn">{t.reserveTable}</a>
       </div>
     </div>
   );
@@ -753,37 +975,37 @@ export default function ModernaWebsite() {
           </button>
         </div>
         <div className="menu-overlay-inner">
-          <button className="menu-overlay-link" onClick={()=>scrollTo("about")}>About</button>
+          <button className="menu-overlay-link" onClick={()=>scrollTo("about")}>{t.about}</button>
           <button className="menu-overlay-link" onClick={()=>setMenuAccordionOpen(m=>!m)}>
-            Menu {menuAccordionOpen ? "−" : "+"}
+            {t.menu} {menuAccordionOpen ? "−" : "+"}
           </button>
           {menuAccordionOpen && (
             <>
-              <button className="menu-overlay-link" onClick={()=>goTo("menu","A La Carte")} style={{fontSize:"clamp(1.4rem,3.5vw,2.8rem)",color:"rgba(250,248,244,0.55)",letterSpacing:"0.06em"}}>À La Carte</button>
-              <button className="menu-overlay-link" onClick={()=>goTo("menu","Set Menu")} style={{fontSize:"clamp(1.4rem,3.5vw,2.8rem)",color:"rgba(250,248,244,0.55)",letterSpacing:"0.06em"}}>Set Menu</button>
-              <button className="menu-overlay-link" onClick={()=>goTo("menu","Wines")} style={{fontSize:"clamp(1.4rem,3.5vw,2.8rem)",color:"rgba(250,248,244,0.55)",letterSpacing:"0.06em"}}>Wines</button>
+              <button className="menu-overlay-link" onClick={()=>goTo("menu","A La Carte")} style={{fontSize:"clamp(1.4rem,3.5vw,2.8rem)",color:"rgba(250,248,244,0.55)",letterSpacing:"0.06em"}}>{t.alaCarte}</button>
+              <button className="menu-overlay-link" onClick={()=>goTo("menu","Set Menu")} style={{fontSize:"clamp(1.4rem,3.5vw,2.8rem)",color:"rgba(250,248,244,0.55)",letterSpacing:"0.06em"}}>{t.setMenu}</button>
+              <button className="menu-overlay-link" onClick={()=>goTo("menu","Wines")} style={{fontSize:"clamp(1.4rem,3.5vw,2.8rem)",color:"rgba(250,248,244,0.55)",letterSpacing:"0.06em"}}>{t.wines}</button>
             </>
           )}
           <button className="menu-overlay-link" onClick={()=>setGalleryOpen(g=>!g)}>
-            Gallery {galleryOpen ? "−" : "+"}
+            {t.gallery} {galleryOpen ? "−" : "+"}
           </button>
           {galleryOpen && (
             <>
-              <button className="menu-overlay-link" onClick={()=>goTo("gallery","Set Menu")} style={{fontSize:"clamp(1.4rem,3.5vw,2.8rem)",color:"rgba(250,248,244,0.55)",letterSpacing:"0.06em"}}>Set Menu</button>
-              <button className="menu-overlay-link" onClick={()=>goTo("gallery","A La Carte")} style={{fontSize:"clamp(1.4rem,3.5vw,2.8rem)",color:"rgba(250,248,244,0.55)",letterSpacing:"0.06em"}}>À La Carte</button>
-              <button className="menu-overlay-link" onClick={()=>goTo("gallery","Restaurant")} style={{fontSize:"clamp(1.4rem,3.5vw,2.8rem)",color:"rgba(250,248,244,0.55)",letterSpacing:"0.06em"}}>Restaurant</button>
+              <button className="menu-overlay-link" onClick={()=>goTo("gallery","Set Menu")} style={{fontSize:"clamp(1.4rem,3.5vw,2.8rem)",color:"rgba(250,248,244,0.55)",letterSpacing:"0.06em"}}>{t.setMenu}</button>
+              <button className="menu-overlay-link" onClick={()=>goTo("gallery","A La Carte")} style={{fontSize:"clamp(1.4rem,3.5vw,2.8rem)",color:"rgba(250,248,244,0.55)",letterSpacing:"0.06em"}}>{t.alaCarte}</button>
+              <button className="menu-overlay-link" onClick={()=>goTo("gallery","Restaurant")} style={{fontSize:"clamp(1.4rem,3.5vw,2.8rem)",color:"rgba(250,248,244,0.55)",letterSpacing:"0.06em"}}>{t.restaurant}</button>
             </>
           )}
-          <button className="menu-overlay-link" onClick={()=>goTo("events")}>Events</button>
-          <button className="menu-overlay-link" onClick={()=>goTo("sustainability")}>Sustainability</button>
-          <button className="menu-overlay-link" onClick={()=>goTo("team")}>Our Team</button>
-          <button className="menu-overlay-link" onClick={()=>scrollTo("reservations")}>Reservations</button>
+          <button className="menu-overlay-link" onClick={()=>goTo("events")}>{t.events}</button>
+          <button className="menu-overlay-link" onClick={()=>goTo("sustainability")}>{t.sustainability}</button>
+          <button className="menu-overlay-link" onClick={()=>goTo("team")}>{t.ourTeam}</button>
+          <button className="menu-overlay-link" onClick={()=>scrollTo("reservations")}>{t.reservations}</button>
         </div>
         <div className="menu-overlay-bottom">
           <p>Retail 8, Uptown Parade · Bonifacio Global City</p>
           <a href={reserveUrl} target="_blank" rel="noreferrer"
             style={{display:"inline-block",marginTop:16,fontFamily:"var(--sans)",fontSize:"10px",letterSpacing:"0.22em",textTransform:"uppercase",color:"rgba(250,248,244,0.5)",fontWeight:300}}>
-            Reserve a Table
+            {t.reserveTable}
           </a>
         </div>
       </div>
@@ -792,14 +1014,22 @@ export default function ModernaWebsite() {
       <header className="nav">
         <img src={IMG_LOGO_BLACK} alt="Moderna" className="nav-logo" onClick={()=>{setPage("home");window.scrollTo(0,0);}} />
         <div className="nav-links">
-          <button className="nav-link" onClick={()=>scrollTo("about")}>About</button>
-          <button className="nav-link" onClick={()=>goTo("menu","A La Carte")}>Menu</button>
-          <button className="nav-link" onClick={()=>goTo("menu","Wines")}>Wines</button>
-          <button className="nav-link" onClick={()=>scrollTo("spaces")}>Spaces</button>
-          <button className="nav-link" onClick={()=>scrollTo("reservations")}>Reservations</button>
+          <button className="nav-link" onClick={()=>scrollTo("about")}>{t.about}</button>
+          <button className="nav-link" onClick={()=>goTo("menu","A La Carte")}>{t.menu}</button>
+          <button className="nav-link" onClick={()=>goTo("menu","Wines")}>{t.wines}</button>
+          <button className="nav-link" onClick={()=>scrollTo("spaces")}>{t.spaces}</button>
+          <button className="nav-link" onClick={()=>scrollTo("reservations")}>{t.reservations}</button>
         </div>
-        <div style={{display:"flex",alignItems:"center",gap:32}}>
-          <a href={reserveUrl} target="_blank" rel="noreferrer" className="reserve-btn">Reserve</a>
+        <div style={{display:"flex",alignItems:"center",gap:20}}>
+          <div className="lang-switcher">
+            {["en","it","tl"].map((l,i) => (
+              <span key={l} style={{display:"flex",alignItems:"center",gap:6}}>
+                {i>0 && <span className="lang-sep">·</span>}
+                <button className={"lang-btn"+(lang===l?" active":"")} onClick={()=>setLang(l)}>{l.toUpperCase()}</button>
+              </span>
+            ))}
+          </div>
+          <a href={reserveUrl} target="_blank" rel="noreferrer" className="reserve-btn">{t.reserve}</a>
           <button className={"hamburger" + (menuOpen?" open":"")} onClick={()=>setMenuOpen(true)}>
             <span /><span /><span />
           </button>
@@ -815,9 +1045,9 @@ export default function ModernaWebsite() {
             <div className="hero-content">
               <img src={IMG_LOGO_WHITE} alt="Moderna" className="fade-in-2"
                 style={{width:"clamp(320px,62vw,860px)",maxWidth:"92%",display:"block",margin:"0 auto",filter:"drop-shadow(0 2px 24px rgba(0,0,0,0.4))"}} />
-              <p className="hero-sub fade-in-3">Modern Italian dining with Filipino warmth.</p>
+              <p className="hero-sub fade-in-3">{t.heroSub}</p>
               <a href={reserveUrl} target="_blank" rel="noreferrer" className="hero-reserve fade-in-3">
-                Reserve a Table
+                {t.reserveTable}
               </a>
             </div>
           </section>
@@ -825,16 +1055,12 @@ export default function ModernaWebsite() {
           {/* ABOUT */}
           <section id="about" className="section text-center pad-y-lg">
             <div className="container">
-              <h2 className="h1" style={{marginBottom:32}}>A New Expression of Italian Dining</h2>
+              <h2 className="h1" style={{marginBottom:32}}>{t.aboutTitle}</h2>
               <div className="divider" />
-              <p className="body">
-                Moderna is the elevated dining concept of Al Dente Food Group. Built on Italian culinary discipline, refined execution, and a deeper dialogue with the ingredients and culture of the Philippines.
-              </p>
-              <p className="body" style={{marginTop:20}}>
-                This is not fusion for effect. It is a restaurant guided by technique, restraint, memory, and identity. Every dish starts from an Italian point of view and evolves through local products, seasonality, and context.
-              </p>
+              <p className="body">{t.aboutBody1}</p>
+              <p className="body" style={{marginTop:20}}>{t.aboutBody2}</p>
               <div style={{marginTop:48}}>
-                <a href={reserveUrl} target="_blank" rel="noreferrer" className="reserve-btn">Reserve a Table</a>
+                <a href={reserveUrl} target="_blank" rel="noreferrer" className="reserve-btn">{t.reserveTable}</a>
               </div>
             </div>
           </section>
@@ -847,14 +1073,12 @@ export default function ModernaWebsite() {
           {/* STORY */}
           <section className="section text-center pad-y-lg">
             <div className="container">
-              <p className="label" style={{marginBottom:24}}>A Story of Roots, Craft & Place</p>
+              <p className="label" style={{marginBottom:24}}>{t.storyLabel}</p>
               <h2 className="h1" style={{fontStyle:"italic",marginBottom:32}}>
-                A cuisine that speaks Italian,<br />but lives fully in Manila.
+                {t.storyTitle.split("\n").map((line,i) => <span key={i}>{line}{i===0&&<br/>}</span>)}
               </h2>
               <div className="divider" />
-              <p className="body">
-                The experience is designed to feel intimate, precise, and alive. Refined, but never cold. Moderna is built around detail — around ingredients treated with respect, and a dining room shaped by atmosphere, product, and clarity.
-              </p>
+              <p className="body">{t.storyBody}</p>
             </div>
           </section>
 
@@ -862,10 +1086,10 @@ export default function ModernaWebsite() {
           <div className="hdivider" />
           <div className="dishes-grid-mobile" style={{display:"grid",gridTemplateColumns:"repeat(2,1fr)"}}>
             {[
-              { name:"Pollo Inasal",             desc:"Charcoal, marinade, and controlled acidity.",           img:IMG_RISOTTO  },
-              { name:"Chocnut",                  desc:"Texture, sweetness, and contrast.",                     img:IMG_CHOCNUT  },
-              { name:"Braciola",                 desc:"Southern Italian memory, executed with depth.",          img:IMG_BRACIOLA },
-              { name:"Risotto con Burong Hipon", desc:"Signature dish. Italian technique with Filipino identity.", img:IMG_INASAL },
+              { name:"Pollo Inasal",             desc: lang==="en" ? "Charcoal, marinade, and controlled acidity." : lang==="it" ? "Carbone, marinatura e acidità controllata." : "Uling, marinade, at kontroladong asim.",           img:IMG_RISOTTO  },
+              { name:"Chocnut",                  desc: lang==="en" ? "Texture, sweetness, and contrast." : lang==="it" ? "Texture, dolcezza e contrasto." : "Tekstura, tamis, at pagkakaiba.",                     img:IMG_CHOCNUT  },
+              { name:"Braciola",                 desc: lang==="en" ? "Southern Italian memory, executed with depth." : lang==="it" ? "Memoria del Sud Italia, eseguita con profondità." : "Alaala ng Timog Italya, isinagawa nang may lalim.",          img:IMG_BRACIOLA },
+              { name:"Risotto con Burong Hipon", desc: lang==="en" ? "Signature dish. Italian technique with Filipino identity." : lang==="it" ? "Piatto firma. Tecnica italiana con identità filippina." : "Pinakatanda ng restaurant. Italyanong teknik na may pagkakakilanlang Pilipino.", img:IMG_INASAL },
             ].map((d,i) => (
               <div key={d.name} style={{overflow:"hidden",borderRight:i%2===0?"1px solid var(--border)":"none",borderBottom:"1px solid var(--border)"}}>
                 <img src={d.img} alt={d.name} style={{width:"100%",height:"min(44vw,440px)",objectFit:"cover",display:"block"}} />
@@ -878,21 +1102,21 @@ export default function ModernaWebsite() {
           </div>
           <div className="hdivider" />
           <section className="section text-center pad-y-sm">
-            <button onClick={()=>goTo("menu","A La Carte")} className="reserve-btn">View Full Menu</button>
+            <button onClick={()=>goTo("menu","A La Carte")} className="reserve-btn">{t.viewFullMenu}</button>
           </section>
 
           {/* PHILOSOPHY */}
           <div className="hdivider" />
           <section className="section text-center pad-y-lg">
             <div className="container">
-              <p className="label" style={{marginBottom:24}}>Our Philosophy</p>
-              <h2 className="h2" style={{marginBottom:64}}>Three principles that guide every plate.</h2>
+              <p className="label" style={{marginBottom:24}}>{t.philosophyLabel}</p>
+              <h2 className="h2" style={{marginBottom:64}}>{t.philosophyTitle}</h2>
             </div>
             <div className="container-wide philosophy-grid" style={{display:"grid",gridTemplateColumns:"repeat(3,1fr)",borderTop:"1px solid var(--border)",borderLeft:"1px solid var(--border)"}}>
               {[
-                {title:"Italian Technique",       text:"Classical foundations, precision, structure, and balance in every plate."},
-                {title:"Filipino Sensibility",     text:"Local ingredients, local memory, and a stronger connection to place."},
-                {title:"Thoughtful Sustainability",text:"Respect for ingredients, controlled sourcing, and a kitchen culture built around intention."},
+                {title:t.phil1Title, text:t.phil1Body},
+                {title:t.phil2Title, text:t.phil2Body},
+                {title:t.phil3Title, text:t.phil3Body},
               ].map(v => (
                 <div key={v.title} className="philosophy-card" style={{padding:"48px 36px",textAlign:"center",borderRight:"1px solid var(--border)",borderBottom:"1px solid var(--border)"}}>
                   <p className="h3" style={{marginBottom:20}}>{v.title}</p>
@@ -907,14 +1131,14 @@ export default function ModernaWebsite() {
             <div style={{position:"relative",overflow:"hidden",borderRight:"1px solid var(--border)"}}>
               <img src={IMG_MAIN_ROOM} alt="The main room" style={{width:"100%",height:"clamp(280px,50vw,540px)",objectFit:"cover",objectPosition:"center center",display:"block"}} />
               <div style={{position:"absolute",bottom:0,left:0,right:0,background:"linear-gradient(to top,rgba(26,23,20,0.7),transparent)",padding:"32px 28px"}}>
-                <p className="label" style={{color:"rgba(250,248,244,0.6)"}}>The Main Room</p>
+                <p className="label" style={{color:"rgba(250,248,244,0.6)"}}>{t.mainRoom}</p>
               </div>
             </div>
             <div style={{position:"relative",overflow:"hidden"}}>
               <img src={IMG_PRIVATE_NEW} alt="Private room" style={{width:"100%",height:"clamp(280px,50vw,540px)",objectFit:"cover",objectPosition:"center center",display:"block"}} />
               <div style={{position:"absolute",bottom:0,left:0,right:0,background:"linear-gradient(to top,rgba(26,23,20,0.85),transparent)",padding:"32px 28px"}}>
-                <p className="label" style={{color:"rgba(250,248,244,0.6)",marginBottom:6}}>Private Room</p>
-                <p style={{fontFamily:"var(--sans)",fontSize:"0.78rem",fontWeight:300,color:"rgba(250,248,244,0.55)",lineHeight:1.7}}>Available for private events and dinners · Up to 20 guests</p>
+                <p className="label" style={{color:"rgba(250,248,244,0.6)",marginBottom:6}}>{t.privateRoom}</p>
+                <p style={{fontFamily:"var(--sans)",fontSize:"0.78rem",fontWeight:300,color:"rgba(250,248,244,0.55)",lineHeight:1.7}}>{t.privateRoomSub}</p>
               </div>
             </div>
           </div>
@@ -932,14 +1156,13 @@ export default function ModernaWebsite() {
           {/* RESERVATIONS */}
           <section id="reservations" className="res-block">
             <div style={{maxWidth:720,margin:"0 auto"}}>
-              <p className="label" style={{color:"rgba(250,248,244,0.4)",marginBottom:24}}>Come & Dine</p>
-              <h2 className="h1" style={{color:"#faf8f4",marginBottom:40}}>Reservations</h2>
+              <p className="label" style={{color:"rgba(250,248,244,0.4)",marginBottom:24}}>{t.comeDine}</p>
+              <h2 className="h1" style={{color:"#faf8f4",marginBottom:40}}>{t.reservations}</h2>
               <div className="hdivider" style={{background:"rgba(250,248,244,0.12)",marginBottom:40}} />
 
               <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:48}} className="team-text-grid">
-                {/* INDIRIZZO */}
                 <div>
-                  <p className="label" style={{color:"rgba(250,248,244,0.35)",marginBottom:20}}>Location</p>
+                  <p className="label" style={{color:"rgba(250,248,244,0.35)",marginBottom:20}}>{t.location}</p>
                   <p style={{fontFamily:"var(--sans)",fontSize:"0.88rem",lineHeight:2.1,color:"rgba(250,248,244,0.65)",fontWeight:300}}>
                     Moderna by Al Dente Food Group<br />
                     Retail 8, Uptown Parade<br />
@@ -948,41 +1171,36 @@ export default function ModernaWebsite() {
                   </p>
                   <a href="https://maps.google.com/?q=Moderna+BGC+Uptown+Parade+Taguig" target="_blank" rel="noreferrer"
                     style={{display:"inline-block",marginTop:16,fontFamily:"var(--sans)",fontSize:"9px",letterSpacing:"0.22em",textTransform:"uppercase",color:"rgba(250,248,244,0.4)",fontWeight:300,borderBottom:"1px solid rgba(250,248,244,0.15)",paddingBottom:2}}>
-                    Open in Maps →
+                    {t.openMaps}
                   </a>
                 </div>
 
-                {/* ORARI */}
                 <div>
-                  <p className="label" style={{color:"rgba(250,248,244,0.35)",marginBottom:20}}>Hours</p>
-                  {[
-                    {day:"Tuesday",            hours:"15:00 – 01:00"},
-                    {day:"Wednesday",          hours:"15:00 – 01:00"},
-                    {day:"Thursday",           hours:"15:00 – 01:00"},
-                    {day:"Friday",             hours:"15:00 – 01:00"},
-                    {day:"Saturday",           hours:"15:00 – 01:00"},
-                    {day:"Sunday",             hours:"15:00 – 00:00"},
-                    {day:"Monday",             hours:"Closed", closed:true},
-                  ].map(r => (
-                    <div key={r.day} style={{display:"flex",justifyContent:"space-between",padding:"9px 0",borderBottom:"1px solid rgba(250,248,244,0.07)"}}>
-                      <p style={{fontFamily:"var(--sans)",fontSize:"0.8rem",fontWeight:300,color:"rgba(250,248,244,0.5)"}}>{r.day}</p>
-                      <p style={{fontFamily:"var(--sans)",fontSize:"0.8rem",fontWeight:300,color:r.closed?"rgba(250,248,244,0.22)":"rgba(250,248,244,0.7)"}}>{r.hours}</p>
-                    </div>
-                  ))}
+                  <p className="label" style={{color:"rgba(250,248,244,0.35)",marginBottom:20}}>{t.hours}</p>
+                  {t.days.map((day, i) => {
+                    const hrs = ["15:00 – 01:00","15:00 – 01:00","15:00 – 01:00","15:00 – 01:00","15:00 – 01:00","15:00 – 00:00",t.closed];
+                    const isClosed = i === 6;
+                    return (
+                      <div key={day} style={{display:"flex",justifyContent:"space-between",padding:"9px 0",borderBottom:"1px solid rgba(250,248,244,0.07)"}}>
+                        <p style={{fontFamily:"var(--sans)",fontSize:"0.8rem",fontWeight:300,color:"rgba(250,248,244,0.5)"}}>{day}</p>
+                        <p style={{fontFamily:"var(--sans)",fontSize:"0.8rem",fontWeight:300,color:isClosed?"rgba(250,248,244,0.22)":"rgba(250,248,244,0.7)"}}>{hrs[i]}</p>
+                      </div>
+                    );
+                  })}
                   <div style={{marginTop:20,display:"flex",flexDirection:"column",gap:6}}>
                     <div style={{display:"flex",justifyContent:"space-between",padding:"9px 0",borderBottom:"1px solid rgba(250,248,244,0.07)"}}>
-                      <p style={{fontFamily:"var(--sans)",fontSize:"0.75rem",fontWeight:300,color:"rgba(250,248,244,0.35)",letterSpacing:"0.05em",textTransform:"uppercase"}}>Happy Hour</p>
+                      <p style={{fontFamily:"var(--sans)",fontSize:"0.75rem",fontWeight:300,color:"rgba(250,248,244,0.35)",letterSpacing:"0.05em",textTransform:"uppercase"}}>{t.happyHour}</p>
                       <p style={{fontFamily:"var(--sans)",fontSize:"0.75rem",fontWeight:300,color:"rgba(250,248,244,0.35)"}}>15:00 – 18:00</p>
                     </div>
                     <div style={{display:"flex",justifyContent:"space-between",padding:"9px 0"}}>
-                      <p style={{fontFamily:"var(--sans)",fontSize:"0.75rem",fontWeight:300,color:"rgba(250,248,244,0.35)",letterSpacing:"0.05em",textTransform:"uppercase"}}>Dinner Service</p>
+                      <p style={{fontFamily:"var(--sans)",fontSize:"0.75rem",fontWeight:300,color:"rgba(250,248,244,0.35)",letterSpacing:"0.05em",textTransform:"uppercase"}}>{t.dinnerService}</p>
                       <p style={{fontFamily:"var(--sans)",fontSize:"0.75rem",fontWeight:300,color:"rgba(250,248,244,0.35)"}}>18:00 – 22:30</p>
                     </div>
                   </div>
                 </div>
               </div>
 
-              <a href={reserveUrl} target="_blank" rel="noreferrer" className="res-reserve-btn">Reserve a Table</a>
+              <a href={reserveUrl} target="_blank" rel="noreferrer" className="res-reserve-btn">{t.reserveTable}</a>
             </div>
           </section>
 
@@ -1013,7 +1231,7 @@ export default function ModernaWebsite() {
           {/* FOOTER */}
           <footer className="footer">
             <img src={IMG_LOGO_BLACK} alt="Moderna" style={{height:14,opacity:0.3}} />
-            <p className="label">Contemporary Italian Dining · BGC · By Al Dente Food Group</p>
+            <p className="label">{ t.footerSub }</p>
             <a href="https://www.instagram.com/moderna_ph/" target="_blank" rel="noreferrer"
               style={{display:"inline-flex",alignItems:"center",gap:6,textDecoration:"none",color:"var(--mid)",opacity:0.6}}>
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
@@ -1024,6 +1242,45 @@ export default function ModernaWebsite() {
               <span className="label">@moderna_ph</span>
             </a>
           </footer>
+
+          {/* NEWSLETTER POPUP */}
+          {newsletterOpen && (
+            <div className="nl-backdrop" onClick={e => { if(e.target===e.currentTarget) setNewsletterOpen(false); }}>
+              <div className="nl-card">
+                <button className="nl-close" onClick={() => setNewsletterOpen(false)} aria-label="Close">✕</button>
+                {!newsletterSubmitted ? (
+                  <>
+                    <p className="nl-label">{t.nlLabel}</p>
+                    <h2 className="nl-title">{t.nlTitle}</h2>
+                    <p className="nl-body">{t.nlBody}</p>
+                    <div className="nl-form">
+                      <input
+                        className="nl-input"
+                        type="email"
+                        placeholder={t.nlPlaceholder}
+                        value={newsletterEmail}
+                        onChange={e => setNewsletterEmail(e.target.value)}
+                        onKeyDown={e => {
+                          if(e.key==="Enter" && newsletterEmail.includes("@")) handleNewsletterSubmit();
+                        }}
+                      />
+                      <button className="nl-btn" onClick={handleNewsletterSubmit}>{t.nlBtn}</button>
+                    </div>
+                    <button className="nl-skip" onClick={() => setNewsletterOpen(false)}>{t.nlSkip}</button>
+                  </>
+                ) : (
+                  <div className="nl-success">
+                    <div className="nl-success-icon">✦</div>
+                    <p className="nl-success-title">{t.nlSuccessTitle}</p>
+                    <p className="nl-success-body">
+                      {t.nlSuccessBody.split("\n").map((line,i)=><span key={i}>{line}{i===0&&<br/>}</span>)}
+                    </p>
+                    <button className="nl-skip" style={{marginTop:28}} onClick={() => setNewsletterOpen(false)}>{t.nlClose}</button>
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
         </>
       )}
     </div>
