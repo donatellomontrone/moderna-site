@@ -402,6 +402,10 @@ export default function ModernaWebsite() {
     .lang-btn:hover { color:var(--dark); }
     .lang-btn.active { color:var(--dark); border-bottom:1px solid var(--dark); }
     .lang-sep { font-size:9px; color:var(--border); }
+    .back-btn { display:inline-flex; align-items:center; gap:8px; background:none; border:none; cursor:pointer; font-family:var(--sans); font-size:9px; letter-spacing:0.22em; text-transform:uppercase; font-weight:300; color:var(--mid); padding:20px 32px; transition:color 0.2s; }
+    .back-btn:hover { color:var(--dark); }
+    .back-btn svg { transition:transform 0.2s; }
+    .back-btn:hover svg { transform:translateX(-3px); }
 
     .philosophy-grid { width: 100%; }
     .philosophy-card { min-width: 0; }
@@ -588,6 +592,7 @@ export default function ModernaWebsite() {
 
   const SustainabilityPage = () => (
     <div className="menu-page">
+      <BackButton />
       {/* HERO FOTO */}
       <div style={{width:"100%",height:"65vh",overflow:"hidden",position:"relative"}}>
         <img src={IMG_SUSTAINABILITY} alt="Moderna sustainability" style={{width:"100%",height:"100%",objectFit:"cover",objectPosition:"center 40%",display:"block"}} />
@@ -645,6 +650,7 @@ export default function ModernaWebsite() {
 
   const EventsPage = () => (
     <div className="menu-page">
+      <BackButton />
       {/* HERO FOTO EVENTO */}
       <div style={{width:"100%",height:"70vh",overflow:"hidden",position:"relative"}}>
         <img src={IMG_EVENT_PARTY} alt="Moderna events" style={{width:"100%",height:"100%",objectFit:"cover",objectPosition:"center 40%",display:"block"}} />
@@ -703,6 +709,7 @@ export default function ModernaWebsite() {
 
   const TeamPage = () => (
     <div className="menu-page">
+      <BackButton />
       {/* FOTO FULL WIDTH */}
       <div style={{width:"100%",height:"70vh",overflow:"hidden"}}>
         <img src={IMG_TEAM_NEW} alt="Moderna team" style={{width:"100%",height:"100%",objectFit:"cover",objectPosition:"center 30%",display:"block"}} />
@@ -771,6 +778,7 @@ export default function ModernaWebsite() {
 
     return (
       <div className="menu-page">
+        <BackButton />
         <div className="menu-page-header">
           <p className="label" style={{marginBottom:16}}>Moderna · BGC</p>
           <h1 className="h1">Gallery</h1>
@@ -846,6 +854,15 @@ export default function ModernaWebsite() {
     );
   };
 
+  const BackButton = () => (
+    <button className="back-btn" onClick={()=>{setPage("home");window.scrollTo(0,0);}}>
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M19 12H5M12 5l-7 7 7 7"/>
+      </svg>
+      Home
+    </button>
+  );
+
   const goTo = (pg, tab) => {
     setPage(pg);
     if (pg === "menu" && tab) setMenuTab(tab);
@@ -862,6 +879,7 @@ export default function ModernaWebsite() {
 
   const MenuPage = () => (
     <div className="menu-page">
+      <BackButton />
       <div className="menu-page-header">
         <p className="label" style={{marginBottom:16}}>Moderna · BGC</p>
         <h1 className="h1">
