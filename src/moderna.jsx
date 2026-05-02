@@ -1062,7 +1062,7 @@ export default function ModernaWebsite() {
             <div className="hero-overlay" />
             <div className="hero-content">
               <img src={IMG_LOGO_WHITE} alt="Moderna" className="fade-in-2"
-                style={{width:"clamp(320px,62vw,860px)",maxWidth:"92%",display:"block",margin:"0 auto",filter:"drop-shadow(0 2px 24px rgba(0,0,0,0.4))"}} />
+                style={{width:"clamp(320px,62vw,860px)",maxWidth:"92%",display:"block",margin:"0 auto",filter:"drop-shadow(0 2px 24px rgba(0,0,0,0.4))",opacity:0.82}} />
               <p className="hero-sub fade-in-3">{t.heroSub}</p>
               <a href={reserveUrl} target="_blank" rel="noreferrer" className="hero-reserve fade-in-3">
                 {t.reserveTable}
